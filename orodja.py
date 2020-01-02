@@ -43,8 +43,7 @@ def zapisi_csv(slovarji, imena_polj, ime_datoteke):
         writer = csv.DictWriter(csv_datoteka, fieldnames=imena_polj)
         writer.writeheader()
         for slovar in slovarji:
-            if not slovar is None:
-                writer.writerow(slovar)
+            writer.writerow(slovar)
 
 
 def zapisi_json(objekt, ime_datoteke):

@@ -11,7 +11,7 @@ vzorec_bloka = re.compile(
 vzorec_knjige = re.compile(
     r"<span itemprop='name' role='heading' aria-level='4'>(?P<naslov>.*?)</span>.*?"
     r"<div class='authorName.*?<span itemprop=.name.>(?P<avtor>.*?)</span>.*?"
-    r"</span> (?P<povprecna_ocena>\d\.\d{2}) avg rating &mdash; (?P<stevilo_ocen>\d*,?\d+) ratings</span>.*?"
+    r"</span> (?P<povprecna_ocena>\d\.\d{2}) avg rating &mdash; (?P<stevilo_ocen>\d*,?\d+) ratings?</span>.*?"
     ,
     flags=re.DOTALL
 )
@@ -19,15 +19,12 @@ vzorec_knjige = re.compile(
 
 
 def izloci_podatke_knjige(blok):
-    knjiga = vzorec_knjige.search(blok)
-    if knjiga is None:
-        pass
-    else: 
-        knjiga = knjiga.groupdict()
-        knjiga['povprecna_ocena'] = float(knjiga['povprecna_ocena'])
-        knjiga['stevilo_ocen'] = int(knjiga['stevilo_ocen'].replace(',', ''))
-        knjiga['naslov'] = knjiga['naslov'].replace('&amp;', '&').replace('"','')
-        return knjiga
+    knjiga = vzorec_knjige.search(blok) 
+    knjiga = knjiga.groupdict()
+    knjiga['povprecna_ocena'] = float(knjiga['povprecna_ocena'])
+    knjiga['stevilo_ocen'] = int(knjiga['stevilo_ocen'].replace(',', ''))
+    knjiga['naslov'] = knjiga['naslov'].replace('&amp;', '&').replace('"','')
+    return knjiga
 
 
 def knjige_na_strani(st_strani):
@@ -45,5 +42,4 @@ knjige = []
 for st_strani in range(1, 13):
     for knjiga in knjige_na_strani(st_strani):
         knjige.append(knjiga)
-orodja.zapisi_json(knjige, 'knjige.json')
 orodja.zapisi_csv(knjige, ['naslov', 'avtor', 'povprecna_ocena', 'stevilo_ocen'], 'knjige.csv')
